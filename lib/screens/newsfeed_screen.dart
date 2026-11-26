@@ -7,6 +7,7 @@ class Post {
     required this.date,
     required this.text,
     required this.likes,
+    required this.comments,
     this.avatarAsset,
     this.imageAsset,
     this.isLiked = false,
@@ -16,6 +17,7 @@ class Post {
   final String date;
   final String text;
   int likes;
+  int comments;
   bool isLiked;
   final String? avatarAsset;
   final String? imageAsset;
@@ -35,6 +37,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       date: 'November 22',
       text: 'Kamusta mga idol!',
       likes: 100,
+      comments: 42,
       avatarAsset: 'assets/images/avatar_me.png',
       imageAsset: null,
     ),
@@ -43,6 +46,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       date: 'December 2',
       text: 'Kicking off the holiday season! Bagong baby',
       likes: 200,
+      comments: 42,
       avatarAsset: 'assets/images/avatar_classmate.png',
       imageAsset: 'assets/images/post_image.jpg',
     ),
@@ -53,6 +57,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       final post = _posts[index];
       post.isLiked = !post.isLiked;
       post.likes += post.isLiked ? 1 : -1;
+    });
+  }
+
+  void _addComment(int index) {
+    setState(() {
+      _posts[index].comments++;
     });
   }
 
@@ -67,10 +77,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
           date: post.date,
           text: post.text,
           likes: post.likes,
+          comments: post.comments,
           isLiked: post.isLiked,
           avatarAsset: post.avatarAsset,
           imageAsset: post.imageAsset,
           onLike: () => _toggleLike(index),
+          onComment: () => _addComment(index),
         );
       },
     );

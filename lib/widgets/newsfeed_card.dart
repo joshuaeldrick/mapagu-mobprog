@@ -3,14 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants.dart';
 import 'custom_text.dart';
 
-class NewsFeedCard extends StatelessWidget {
+class NewsFeedCard extends StatefulWidget {
   const NewsFeedCard({
     super.key,
     required this.authorName,
     required this.date,
     required this.text,
     required this.likes,
+    required this.comments,
     required this.onLike,
+    required this.onComment,
     this.isLiked = false,
     this.avatarAsset,
     this.imageAsset,
@@ -20,10 +22,27 @@ class NewsFeedCard extends StatelessWidget {
   final String date;
   final String text;
   final int likes;
+  final int comments;
   final bool isLiked;
   final String? avatarAsset;
   final String? imageAsset;
   final VoidCallback onLike;
+  final VoidCallback onComment;
+
+  @override
+  State<NewsFeedCard> createState() => _NewsFeedCardState();
+}
+
+class _NewsFeedCardState extends State<NewsFeedCard> {
+  final _commentController = TextEditingController();
+  final _commentFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _commentFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +56,20 @@ class NewsFeedCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                _Avatar(assetPath: avatarAsset),
+                _Avatar(assetPath: widget.avatarAsset),
                 SizedBox(width: 10.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(text: authorName, fontWeight: FontWeight.bold),
-                    CustomText(text: date, fontSize: 13, color: AppColors.grey),
+                    CustomText(
+                      text: widget.authorName,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    CustomText(
+                      text: widget.date,
+                      fontSize: 13,
+                      color: AppColors.grey,
+                    ),
                   ],
                 ),
                 const Spacer(),
@@ -51,20 +77,20 @@ class NewsFeedCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10.h),
-            CustomText(text: text),
+            CustomText(text: widget.text),
             SizedBox(height: 10.h),
-            if (imageAsset != null) ...[
-              _PostImage(assetPath: imageAsset!),
+            if (widget.imageAsset != null) ...[
+              _PostImage(assetPath: widget.imageAsset!),
               SizedBox(height: 10.h),
             ],
             Row(
               children: [
                 Icon(Icons.thumb_up, color: AppColors.facebookBlue, size: 18.r),
                 SizedBox(width: 4.w),
-                CustomText(text: '$likes'),
+                CustomText(text: '${widget.likes}'),
                 const Spacer(),
-                const CustomText(
-                  text: '42 Comments   5 Shares',
+                CustomText(
+                  text: '${widget.comments} Comments   5 Shares',
                   fontSize: 13,
                   color: AppColors.grey,
                 ),
@@ -75,17 +101,21 @@ class NewsFeedCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _ActionButton(
-                    icon: isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
+                    icon: widget.isLiked
+                        ? Icons.thumb_up
+                        : Icons.thumb_up_outlined,
                     label: 'Like',
-                    color: isLiked ? AppColors.facebookBlue : AppColors.grey,
-                    onTap: onLike,
+                    color: widget.isLiked
+                        ? AppColors.facebookBlue
+                        : AppColors.grey,
+                    onTap: widget.onLike,
                   ),
                 ),
                 Expanded(
                   child: _ActionButton(
                     icon: Icons.comment_outlined,
                     label: 'Comment',
-                    onTap: () {},
+                    onTap: () => _commentFocusNode.requestFocus(),
                   ),
                 ),
                 Expanded(
@@ -98,16 +128,28 @@ class NewsFeedCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 8.h),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: AppColors.lightGrey,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: const CustomText(
-                text: 'Write a comment...',
-                color: AppColors.grey,
+            TextField(
+              controller: _commentController,
+              focusNode: _commentFocusNode,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (comment) {
+                if (comment.trim().isEmpty) return;
+                widget.onComment();
+                _commentController.clear();
+              },
+              decoration: InputDecoration(
+                hintText: 'Write a comment...',
+                hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp),
+                filled: true,
+                fillColor: AppColors.lightGrey,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 8.h,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.r),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ],

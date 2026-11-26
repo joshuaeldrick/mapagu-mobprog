@@ -1,7 +1,7 @@
 # mapagu_mobprog
 
 Laboratory Activity 1A: File Structuring | Design Pattern
-Name: Jonjuan Mapagu  |  Section: INF243
+Name: Joshua Mapagu  |  Section: INF243
 
 A Facebook-like newsfeed built in Flutter. The goal is file structuring,
 not the feed itself.
@@ -13,7 +13,7 @@ mapagu_mobprog/
 |-- assets/
 |   |-- fonts/
 |   |-- icons/
-|   |-- images/        (post_image.png, avatar_me.png, avatar_classmate.png)
+|   |-- images/        (post_image.jpg, avatar_me.png, avatar_classmate.png)
 |-- lib/
 |   |-- screens/
 |   |   |-- home_screen.dart       (app bar + bottom navigation)
@@ -50,7 +50,7 @@ whether it has an image or not?**
    `newsfeed_screen.dart` the `Post` model has an optional field
    `final String? imageAsset;`. The `?` means it can be `null`.
    Post 1 (mine) sets `imageAsset: null`, and Post 2 sets
-   `imageAsset: 'assets/images/post_image.png'`.
+   `imageAsset: 'assets/images/post_image.jpg'`.
 2. `NewsFeedScreen` passes `imageAsset` to `NewsFeedCard`, which also
    declares it as `String?`, so the card accepts both cases.
 3. Inside the card's `Column`, the image is added with a collection `if`:
